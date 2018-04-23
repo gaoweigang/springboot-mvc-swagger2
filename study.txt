@@ -1,0 +1,16 @@
+springboot自定义拦截器
+
+
+
+后续问题：
+1.session共享
+
+2.spring session实现分布式session
+
+3.SpringBoot配置类WebMvcConfigurerAdapter
+
+4.SpringBoot配置拦截器
+
+
+5.CROS 跨域
+
