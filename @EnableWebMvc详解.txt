@@ -1,0 +1,62 @@
+org.springframework.web.servlet.config.annotation
+Annotation Type EnableWebMvc
+
+@Retention(value=RUNTIME)
+ @Target(value=TYPE)
+ @Documented
+ @Import(value=DelegatingWebMvcConfiguration.class)
+public @interface EnableWebMvc
+Adding this annotation to an @Configuration class imports the Spring MVC configuration from WebMvcConfigurationSupport, e.g.:
+将@EnableWebMvc注释添加到@Configuration类将从WebMvcConfigurationSupport导入Spring MVC配置
+
+ @Configuration
+ @EnableWebMvc
+ @ComponentScan(basePackageClasses = MyConfiguration.class)
+ public class MyConfiguration {
+
+ }
+
+To customize the imported configuration, implement the interface WebMvcConfigurer and override individual methods, e.g.:
+要定制导入的配置，请实现接口WebMvcConfigurer并重写个别的方法
+
+ @Configuration
+ @EnableWebMvc
+ @ComponentScan(basePackageClasses = MyConfiguration.class)
+ public class MyConfiguration implements WebMvcConfigurer {
+
+           @Override
+           public void addFormatters(FormatterRegistry formatterRegistry) {
+         formatterRegistry.addConverter(new MyConverter());
+           }
+
+           @Override
+           public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+         converters.add(new MyHttpMessageConverter());
+           }
+
+ }
+
+Note: only one @Configuration class may have the @EnableWebMvc annotation to import the Spring Web MVC configuration. There can however be multiple @Configuration classes implementing WebMvcConfigurer in order to customize the provided configuration.
+If WebMvcConfigurer does not expose some more advanced setting that needs to be configured consider removing the @EnableWebMvc annotation and extending directly from WebMvcConfigurationSupport or DelegatingWebMvcConfiguration, e.g.:
+注意：只有一个@Configuration类可以具有@EnableWebMvc注释来导入Spring Web MVC配置。然而，为了定制所提供的配置，
+可以有多个实现WebMvcConfigurer的@Configuration类。如果WebMvcConfigurer没有公开一些需要配置的更高级的设置，
+可以考虑删除@EnableWebMvc注释并直接从WebMvcConfigurationSupport或DelegatingWebMvcConfiguration中扩展
+
+ @Configuration
+ @ComponentScan(basePackageClasses = { MyConfiguration.class })
+ public class MyConfiguration extends WebMvcConfigurationSupport {
+
+           @Override
+           public void addFormatters(FormatterRegistry formatterRegistry) {
+         formatterRegistry.addConverter(new MyConverter());
+           }
+
+           @Bean
+           public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
+         // Create or delegate to "super" to create and
+         // customize properties of RequestMappingHandlerAdapter
+           }
+ }
+
+ 官方文档参考：https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/EnableWebMvc.html
+ 个人博客：https://blog.csdn.net/pinebud55/article/details/53420481
